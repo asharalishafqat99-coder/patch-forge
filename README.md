@@ -53,8 +53,4 @@ Built with **Spring Boot** and styled with a sleek **GitHub Dark Theme** UI.
    
 ## 👨‍💻 Developers
 
-This project is actively developed and maintained by:
-
-| Role           | Name     | Contact / Profile                                                        |
-|----------------|----------|--------------------------------------------------------------------------|
-| Lead Developer | Ashar Ali Shafqat | [GitHub](https://github.com/asharalishafqat99-coder) • [Email](mailto:asharalishafqat99@gmail.com) |
+- **Lead Developer:** Ashar Ali Shafqat — [GitHub](https://github.com/asharalishafqat99-coder) • [Email](mailto:asharalishafqat99@gmail.com)
