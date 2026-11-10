@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>PatchForge · Patch Ready</title>
+<style>
+/* ===== GITHUB DARK THEME ===== */
+:root {
+	--gh-canvas-default: #0d1117;
+	--gh-canvas-subtle: #161b22;
+	--gh-canvas-inset: #010409;
+	--gh-border-default: #30363d;
+	--gh-border-muted: #21262d;
+	--gh-fg-default: #e6edf3;
+	--gh-fg-muted: #7d8590;
+	--gh-fg-subtle: #6e7681;
+	--gh-accent-fg: #2f81f7;
+	--gh-accent-emphasis: #1f6feb;
+	--gh-accent-muted: rgba(56, 139, 253, 0.15);
+	--gh-success-fg: #3fb950;
+	--gh-success-emphasis: #238636;
+	--gh-danger-fg: #f85149;
+	--gh-danger-emphasis: #da3633;
+	--gh-danger-subtle: rgba(248, 81, 73, 0.1);
+	--gh-attention-fg: #d29922;
+	--gh-attention-subtle: rgba(187, 128, 9, 0.15);
+	--gh-attention-border: rgba(187, 128, 9, 0.4);
+	--gh-neutral-muted: rgba(110, 118, 129, 0.4);
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: var(--gh-canvas-default);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+		Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--gh-fg-default);
+	max-width: 768px;
+	margin: 40px auto;
+	padding: 0 16px;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--gh-border-muted);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.header .logo {
+	height: 40px;
+	width: auto;
+	max-width: 240px;
+	flex-shrink: 0;
+	display: block;
+	object-fit: contain;
+	border-radius: 8px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-user-drag: none;
+	user-drag: none;
+}
+
+h1 {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--gh-fg-default);
+	letter-spacing: -0.2px;
+}
+
+/* Status banner — success style */
+.status-banner {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background-color: rgba(35, 134, 54, 0.15);
+	border: 1px solid rgba(63, 185, 80, 0.4);
+	border-radius: 6px;
+	padding: 12px 16px;
+	margin-bottom: 16px;
+	font-size: 14px;
+	color: var(--gh-fg-default);
+}
+
+.status-banner svg {
+	fill: var(--gh-success-fg);
+	flex-shrink: 0;
+}
+
+.status-banner strong {
+	color: var(--gh-success-fg);
+	font-weight: 600;
+}
+
+/* Summary text */
+.summary {
+	font-size: 14px;
+	color: var(--gh-fg-muted);
+	margin: 16px 0;
+	line-height: 1.6;
+}
+
+.summary .count {
+	color: var(--gh-fg-default);
+	font-weight: 600;
+}
+
+/* Main content card */
+.card {
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 6px;
+	padding: 24px;
+	margin-bottom: 16px;
+}
+
+/* Download button — GitHub green primary */
+.download-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	padding: 5px 16px;
+	min-height: 32px;
+	color: #ffffff;
+	background-color: var(--gh-success-emphasis);
+	text-decoration: none;
+	border: 1px solid rgba(240, 246, 252, 0.1);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	margin-bottom: 16px;
+}
+
+.download-btn:hover {
+	background-color: #2ea043;
+	text-decoration: none;
+}
+
+.download-btn:active {
+	background-color: var(--gh-success-emphasis);
+	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.download-btn svg {
+	fill: currentColor;
+}
+
+/* Section titles */
+.section-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--gh-fg-default);
+	margin-top: 24px;
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--gh-border-muted);
+}
+
+/* Lists */
+.success-list, .failure-list {
+	list-style: none;
+	margin-top: 8px;
+	padding: 0;
+	font-size: 13px;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+		"Liberation Mono", monospace;
+}
+
+.success-list li, .failure-list li {
+	padding: 6px 12px;
+	border-radius: 6px;
+	margin-bottom: 4px;
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	line-height: 1.5;
+	word-break: break-all;
+}
+
+.success-list li {
+	background-color: rgba(63, 185, 80, 0.08);
+	color: var(--gh-fg-default);
+	border-left: 3px solid var(--gh-success-fg);
+}
+
+.success-list li::before {
+	content: '✓';
+	color: var(--gh-success-fg);
+	font-weight: bold;
+	flex-shrink: 0;
+}
+
+.failure-list li {
+	background-color: var(--gh-danger-subtle);
+	color: var(--gh-fg-default);
+	border-left: 3px solid var(--gh-danger-fg);
+}
+
+.failure-list li::before {
+	content: '✕';
+	color: var(--gh-danger-fg);
+	font-weight: bold;
+	flex-shrink: 0;
+}
+
+.failure-list code {
+	background-color: rgba(110, 118, 129, 0.2);
+	padding: 1px 6px;
+	border-radius: 4px;
+	font-size: 12px;
+	color: var(--gh-fg-default);
+}
+
+.failure-list .reason {
+	color: var(--gh-fg-muted);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+		Helvetica, Arial, sans-serif;
+	font-size: 13px;
+}
+
+/* Warning box — GitHub attention style */
+.warning-box {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	background-color: var(--gh-attention-subtle);
+	border: 1px solid var(--gh-attention-border);
+	border-radius: 6px;
+	padding: 16px;
+	margin-top: 16px;
+	font-size: 14px;
+	color: var(--gh-fg-default);
+	line-height: 1.5;
+}
+
+.warning-box>svg {
+	fill: var(--gh-attention-fg);
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.warning-box .warning-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.warning-box strong {
+	display: block;
+	font-weight: 600;
+	color: var(--gh-attention-fg);
+	margin-bottom: 8px;
+	font-size: 14px;
+}
+
+.warning-box p {
+	margin-bottom: 8px;
+	color: var(--gh-fg-muted);
+}
+
+/* Back link */
+.back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid var(--gh-border-muted);
+	width: 100%;
+	font-size: 14px;
+	color: var(--gh-accent-fg);
+	text-decoration: none;
+	transition: color 0.15s;
+}
+
+.back-link:hover {
+	color: var(--gh-accent-emphasis);
+	text-decoration: underline;
+}
+
+.back-link svg {
+	fill: currentColor;
+}
+
+/* ── Footer meta cluster (developer + version) — FIXED dock ── */
+.meta-cluster {
+	position: fixed;
+	bottom: 16px;
+	right: 24px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	z-index: 1000;
+	padding: 8px 12px;
+	background-color: var(--gh-canvas-default);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 999px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* Developer identity block */
+.developer {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 12px 4px 4px;
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 999px;
+	transition: border-color 0.15s, background-color 0.15s;
+	white-space: nowrap;
+}
+
+.developer:hover {
+	border-color: var(--gh-fg-subtle);
+	background-color: var(--gh-canvas-inset);
+}
+
+.developer-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #1f6feb 0%, #8957e5 100%);
+	flex-shrink: 0;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+.developer-avatar svg {
+	fill: #ffffff;
+	display: block;
+}
+
+.developer-text {
+	display: inline-flex;
+	flex-direction: column;
+	line-height: 1.05;
+	gap: 1px;
+}
+
+.developer-label {
+	font-size: 9px;
+	font-weight: 500;
+	letter-spacing: 0.6px;
+	text-transform: uppercase;
+	color: var(--gh-fg-subtle);
+}
+
+.developer-name {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--gh-fg-default);
+	letter-spacing: -0.1px;
+}
+
+/* Version badge */
+.version-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+		"Liberation Mono", monospace;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	padding: 5px 10px;
+	color: var(--gh-fg-muted);
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 20px;
+	white-space: nowrap;
+	transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.version-badge:hover {
+	color: var(--gh-fg-default);
+	border-color: var(--gh-fg-subtle);
+	background-color: var(--gh-canvas-inset);
+}
+
+.version-badge .dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: var(--gh-success-fg);
+	display: inline-block;
+	flex-shrink: 0;
+	box-shadow: 0 0 0 2px rgba(63, 185, 80, 0.15);
+}
+
+.version-badge .label {
+	color: var(--gh-fg-subtle);
+	font-weight: 400;
+}
+
+.version-badge .value {
+	color: var(--gh-fg-default);
+	font-weight: 600;
+}
+
+/* Responsive */
+@media ( max-width : 600px) {
+	body {
+		margin: 20px auto;
+		padding: 0 12px 96px;
+	}
+	.card {
+		padding: 16px;
+	}
+
+	.meta-cluster {
+		left: 12px;
+		right: 12px;
+		bottom: 12px;
+		justify-content: center;
+	}
+	.developer-text {
+		max-width: 140px;
+	}
+	.developer-name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	
+	/* Fixed mobile logo rule to allow width scaling */
+	.header .logo {
+		height: 32px;
+		width: auto;
+		max-width: 180px;
+	}
+}
+</style>
+</head>
+<body>
+
+	<!-- ── Header (Dynamic Logo) ── -->
+	<div class="header">
+		<img class="logo" th:src="@{${logoPath}}" alt="PatchForge logo" width="40" height="40" />
+		<h1>
+			Patch Ready — <span th:text="${result.rootFolderName()}" style="color: var(--gh-accent-fg);"></span>
+		</h1>
+	</div>
+
+	<div class="status-banner">
+		<svg height="16" viewBox="0 0 16 16" width="16" aria-hidden="true">
+			<path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.062.751.751 0 0 0-1.062-.017L6.75 9.154 5.28 7.72a.751.751 0 0 0-1.062.018.751.751 0 0 0-.018 1.061l2.005 2a.75.75 0 0 0 1.06 0l4.514-4.5Z"></path>
+		</svg>
+		<div>
+			<strong>Patch built successfully</strong> — your download is ready.
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="summary">
+			<span class="count" th:text="${#lists.size(result.successfulClasses())}">0</span>
+			class(es) included successfully. 
+			<span th:if="${result.hasFailures()}"> 
+				<span class="count" th:text="${#lists.size(result.failedLines())}">0</span> line(s) could not be processed.
+			</span>
+		</div>
+
+		<a class="download-btn" th:href="@{'/download/' + ${downloadId}}">
+			<svg height="16" viewBox="0 0 16 16" width="16" aria-hidden="true">
+				<path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"></path>
+				<path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"></path>
+			</svg> Download patch.zip
+		</a>
+	</div>
+
+	<div class="warning-box" th:if="${result.hasFailures()}">
+		<svg height="16" viewBox="0 0 16 16" width="16" aria-hidden="true">
+			<path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+		</svg>
+		<div class="warning-content">
+			<strong>Some lines were skipped</strong>
+			<p>The patch above only includes the classes that resolved successfully. Review these and re-run if needed:</p>
+			<ul class="failure-list">
+				<li th:each="failure : ${result.failedLines()}">
+					<div>
+						<code th:text="${failure.originalLine()}"></code>
+						<span class="reason" th:text="'— ' + ${failure.reason()}"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="section-title" th:if="${!result.successfulClasses().isEmpty()}">Included classes</div>
+	<ul class="success-list" th:if="${!result.successfulClasses().isEmpty()}">
+		<li th:each="cls : ${result.successfulClasses()}" th:text="${cls.packageName()} + '.' + ${cls.className()}"></li>
+	</ul>
+
+	<a class="back-link" th:href="@{/}"> 
+		<svg height="16" viewBox="0 0 16 16" width="16" aria-hidden="true">
+			<path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path>
+		</svg> Create another patch
+	</a>
+
+	<!-- ── Footer: developer + version (fixed dock, non-selectable) ── -->
+	<div class="meta-cluster">
+		<span class="developer" th:title="'Developed by ' + ${appDeveloper}">
+			<span class="developer-avatar" aria-hidden="true"> 
+				<svg height="14" viewBox="0 0 16 16" width="14">
+					<path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
+				</svg>
+			</span> 
+			<span class="developer-text"> 
+				<span class="developer-label">Developer</span>
+				<span class="developer-name" th:text="${appDeveloper}">—</span>
+			</span>
+		</span> 
+		
+		<span class="version-badge" th:title="'PatchForge version ' + ${appVersion}"> 
+			<span class="dot"></span> 
+			<span class="label">v</span> 
+			<span class="value" th:text="${appVersion}">—</span>
+		</span>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="'PatchForge ' + ${appVersion} + ' · Create UAT Patch'">PatchForge · Create UAT Patch</title>
+<style>
+/* ===== GITHUB DARK THEME ===== */
+:root {
+	--gh-canvas-default: #0d1117;
+	--gh-canvas-subtle: #161b22;
+	--gh-canvas-inset: #010409;
+	--gh-border-default: #30363d;
+	--gh-border-muted: #21262d;
+	--gh-fg-default: #e6edf3;
+	--gh-fg-muted: #7d8590;
+	--gh-fg-subtle: #6e7681;
+	--gh-accent-fg: #2f81f7;
+	--gh-accent-emphasis: #1f6feb;
+	--gh-accent-muted: rgba(56, 139, 253, 0.15);
+	--gh-accent-subtle: rgba(56, 139, 253, 0.1);
+	--gh-success-fg: #3fb950;
+	--gh-danger-fg: #f85149;
+	--gh-danger-emphasis: #da3633;
+	--gh-danger-subtle: rgba(248, 81, 73, 0.1);
+	--gh-attention-fg: #d29922;
+	--gh-neutral-muted: rgba(110, 118, 129, 0.4);
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* ── Full-viewport app shell ── */
+html, body {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	background-color: var(--gh-canvas-default);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+		Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--gh-fg-default);
+	-webkit-font-smoothing: antialiased;
+	max-width: 768px;
+	margin: 0 auto;
+	padding: 40px 16px 96px;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+/* ── Header: logo + title ── */
+.header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--gh-border-muted);
+	flex-wrap: wrap;
+	flex-shrink: 0;
+}
+
+/* ── Logo ── */
+.header .logo {
+    height: 40px;            /* Set a good visible height */
+    width: auto;             /* Let the width scale naturally */
+    max-width: 240px;        /* Safety cap */
+    flex-shrink: 0;
+    display: block;
+    object-fit: contain;
+    
+    /* ── NEW: Rounded corners ── */
+    border-radius: 8px;      /* Change this value to adjust the curve */
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+h1 {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--gh-fg-default);
+	letter-spacing: -0.2px;
+	min-width: 0;
+}
+
+/* ── Subtitle ── */
+.subtitle {
+	font-size: 14px;
+	color: var(--gh-fg-muted);
+	margin-bottom: 24px;
+	margin-top: 4px;
+	flex-shrink: 0;
+}
+
+/* ── Error message ── */
+.error {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	background-color: var(--gh-danger-subtle);
+	color: var(--gh-fg-default);
+	padding: 16px;
+	border: 1px solid rgba(248, 81, 73, 0.4);
+	border-radius: 6px;
+	margin-bottom: 16px;
+	font-size: 14px;
+	line-height: 1.5;
+	flex-shrink: 0;
+}
+
+.error::before {
+	content: '';
+	display: block;
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+	margin-top: 1px;
+	background-color: var(--gh-danger-fg);
+	-webkit-mask:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Z'/%3E%3C/svg%3E")
+		no-repeat center;
+	mask:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Z'/%3E%3C/svg%3E")
+		no-repeat center;
+}
+
+.error:empty {
+	display: none;
+}
+
+/* ── Form container ── */
+form {
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 6px;
+	padding: 24px;
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+label {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--gh-fg-default);
+	margin-bottom: 6px;
+	margin-top: 16px;
+	line-height: 1.5;
+}
+
+label:first-of-type {
+	margin-top: 0;
+}
+
+label.required::after {
+	content: ' *';
+	color: var(--gh-danger-fg);
+	font-weight: 400;
+}
+
+/* ── Inputs ── */
+input[type=text], input[type=file], textarea {
+	width: 100%;
+	padding: 5px 12px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+		Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--gh-fg-default);
+	background-color: var(--gh-canvas-default);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 6px;
+	outline: none;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	vertical-align: middle;
+}
+
+input[type=text] {
+	min-height: 32px;
+}
+
+input[type=text]:focus, input[type=file]:focus, textarea:focus {
+	border-color: var(--gh-accent-emphasis);
+	box-shadow: 0 0 0 3px var(--gh-accent-muted);
+}
+
+input[type=text]::placeholder, textarea::placeholder {
+	color: var(--gh-fg-subtle);
+	opacity: 1;
+}
+
+input[type=file] {
+	padding: 6px 12px;
+	cursor: pointer;
+	min-height: 32px;
+}
+
+input[type=file]::file-selector-button {
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 20px;
+	padding: 5px 16px;
+	margin-right: 12px;
+	color: var(--gh-fg-default);
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.2s, border-color 0.2s;
+}
+
+input[type=file]::file-selector-button:hover {
+	background-color: var(--gh-border-muted);
+	border-color: var(--gh-fg-subtle);
+}
+
+textarea {
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+		"Liberation Mono", monospace;
+	font-size: 13px;
+	line-height: 1.5;
+	padding: 8px 12px;
+	resize: vertical;
+	min-height: 100px;
+}
+
+.row {
+	display: flex;
+	gap: 16px;
+	margin-top: 0;
+}
+
+.row>div {
+	flex: 1;
+	min-width: 0;
+}
+
+.hint {
+	font-size: 12px;
+	color: var(--gh-fg-muted);
+	margin-top: 4px;
+	line-height: 1.4;
+}
+
+.form-actions {
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid var(--gh-border-muted);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+}
+
+button[type=submit] {
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	padding: 5px 16px;
+	min-height: 32px;
+	color: #ffffff;
+	background-color: #238636;
+	border: 1px solid rgba(240, 246, 252, 0.1);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	position: relative;
+	user-select: none;
+	appearance: none;
+}
+
+button[type=submit]:hover { background-color: #2ea043; }
+button[type=submit]:active { background-color: #238636; box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2); }
+button[type=submit]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gh-accent-muted); }
+
+button[type=reset] {
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	padding: 5px 16px;
+	min-height: 32px;
+	color: var(--gh-fg-default);
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+	user-select: none;
+	appearance: none;
+}
+
+button[type=reset]:hover { background-color: var(--gh-danger-emphasis); border-color: var(--gh-danger-emphasis); color: #ffffff; }
+button[type=reset]:active { background-color: var(--gh-danger-emphasis); box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2); }
+button[type=reset]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gh-danger-subtle); }
+
+.field-group { margin-bottom: 16px; }
+.field-group:last-of-type { margin-bottom: 0; }
+
+/* ── Scrollbars ── */
+form::-webkit-scrollbar, textarea::-webkit-scrollbar { width: 10px; background: var(--gh-canvas-default); }
+form::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-thumb { background: var(--gh-border-default); border-radius: 6px; border: 2px solid var(--gh-canvas-default); }
+form::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { background: var(--gh-fg-subtle); }
+
+/* ── Footer dock ── */
+.meta-cluster {
+	position: fixed;
+	bottom: 16px;
+	right: 24px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	z-index: 1000;
+	padding: 8px 12px;
+	background-color: var(--gh-canvas-default);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 999px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.developer {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 12px 4px 4px;
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 999px;
+	transition: border-color 0.15s, background-color 0.15s;
+	white-space: nowrap;
+}
+
+.developer:hover { border-color: var(--gh-fg-subtle); background-color: var(--gh-canvas-inset); }
+
+.developer-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #1f6feb 0%, #8957e5 100%);
+	flex-shrink: 0;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+.developer-avatar svg { fill: #ffffff; display: block; }
+
+.developer-text { display: inline-flex; flex-direction: column; line-height: 1.05; gap: 1px; }
+.developer-label { font-size: 9px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; color: var(--gh-fg-subtle); }
+.developer-name { font-size: 13px; font-weight: 600; color: var(--gh-fg-default); letter-spacing: -0.1px; }
+
+.version-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	padding: 5px 10px;
+	color: var(--gh-fg-muted);
+	background-color: var(--gh-canvas-subtle);
+	border: 1px solid var(--gh-border-default);
+	border-radius: 20px;
+	white-space: nowrap;
+	transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.version-badge:hover { color: var(--gh-fg-default); border-color: var(--gh-fg-subtle); background-color: var(--gh-canvas-inset); }
+.version-badge .dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--gh-success-fg); display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(63, 185, 80, 0.15); }
+.version-badge .label { color: var(--gh-fg-subtle); font-weight: 400; }
+.version-badge .value { color: var(--gh-fg-default); font-weight: 600; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+	body { padding: 20px 12px 96px; }
+	form { padding: 16px; }
+	.row { flex-direction: column; gap: 0; }
+	.row>div { width: 100%; }
+	h1 { font-size: 17px; }
+
+	.meta-cluster { left: 12px; right: 12px; bottom: 12px; justify-content: center; }
+	.developer-text { max-width: 140px; }
+	.developer-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+	.header .logo { width: 36px; height: 36px; }
+}
+</style>
+</head>
+<body>
+
+	<!-- ── Header ── -->
+	<div class="header">
+		<img class="logo" th:src="@{${logoPath}}" alt="PatchForge logo" width="48" height="48" />
+		<h1>PatchForge — Create UAT Patch</h1>
+	</div>
+
+	<p class="subtitle">Build and package a UAT patch with class files,
+		SQL queries, and deployment notes.</p>
+
+	<div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+	<form th:action="@{/patch}" th:object="${patchForm}" method="post"
+		enctype="multipart/form-data">
+
+		<div class="field-group">
+			<label for="warFile" class="required">WAR file</label>
+			<input type="file" id="warFile" name="warFile" accept=".war" required />
+			<div class="hint">Select the .war archive to patch.</div>
+		</div>
+
+		<div class="row">
+			<div class="field-group">
+				<label for="branchName" class="required">Branch name</label>
+				<input type="text" id="branchName" th:field="*{branchName}"
+					placeholder="release-2.3" required />
+			</div>
+			<div class="field-group">
+				<label for="fixation" class="required">Fixation</label>
+				<input type="text" id="fixation" th:field="*{fixation}"
+					placeholder="FIX-101" required />
+			</div>
+			<div class="field-group">
+				<label for="date" class="required">Date</label>
+				<input type="text" id="date" th:field="*{date}" required
+					placeholder="YYYY-MM-DD" />
+			</div>
+		</div>
+
+		<div class="field-group">
+			<label for="classPaths">Class paths</label>
+			<textarea id="classPaths" th:field="*{classPaths}" rows="8"
+				placeholder="C:\Users\asher.ali\Desktop\gitProjects\...\ag-mw-upd\src\main\com\ag\config\SomeClass.java"></textarea>
+			<div class="hint">Paste the full path for each .class file to
+				include in this patch, one per line.</div>
+		</div>
+
+		<div class="field-group">
+			<label for="sql">SQL queries <span
+				style="color: var(--gh-fg-muted); font-weight: 400;">(optional)</span></label>
+			<textarea id="sql" th:field="*{sql}" rows="5"
+				placeholder="SELECT * FROM ..."></textarea>
+		</div>
+
+		<div class="field-group">
+			<label for="guide">Guide <span
+				style="color: var(--gh-fg-muted); font-weight: 400;">(optional)</span></label>
+			<textarea id="guide" th:field="*{guide}" rows="6"
+				placeholder="Deployment notes / steps for UAT..."></textarea>
+		</div>
+
+		<div class="form-actions">
+			<button type="reset">Reset form</button>
+			<button type="submit">Build Patch</button>
+		</div>
+
+	</form>
+
+	<!-- ── Footer: developer + version (fixed dock) ── -->
+	<div class="meta-cluster">
+		<span class="developer" th:title="'Developed by ' + ${appDeveloper}">
+			<span class="developer-avatar" aria-hidden="true">
+				<svg height="14" viewBox="0 0 16 16" width="14">
+					<path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
+				</svg>
+			</span>
+			<span class="developer-text">
+				<span class="developer-label">Developer</span>
+				<span class="developer-name" th:text="${appDeveloper}">—</span>
+			</span>
+		</span>
+		<span class="version-badge" th:title="'PatchForge version ' + ${appVersion}">
+			<span class="dot"></span>
+			<span class="label">v</span>
+			<span class="value" th:text="${appVersion}">—</span>
+		</span>
+	</div>
+
+</body>
+</html>
