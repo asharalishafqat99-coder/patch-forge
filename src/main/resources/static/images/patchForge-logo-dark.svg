@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 120" width="100%" height="100%">
+  <defs>
+    <!-- Background Shield Gradient -->
+    <linearGradient id="shieldGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2ea043" />
+      <stop offset="100%" stop-color="#196c2e" />
+    </linearGradient>
+
+    <!-- Text Gradient -->
+    <linearGradient id="textGradDark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#3fb950" />
+    </linearGradient>
+
+    <!-- Blue Sphere Gradient -->
+    <radialGradient id="blueDotGradDark" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#58a6ff" />
+      <stop offset="50%" stop-color="#1f6feb" />
+      <stop offset="100%" stop-color="#09388c" />
+    </radialGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="dropShadowDark" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+
+    <style>
+      .shield-base { fill: url(#shieldGradDark); stroke: #3fb950; stroke-width: 2.5; filter: url(#dropShadowDark); }
+      .shield-dash { fill: none; stroke: #7ee787; stroke-width: 2; stroke-dasharray: 4,4; stroke-opacity: 0.9; }
+      .code-brackets { fill: none; stroke: #ffffff; stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
+      .center-dot { fill: url(#blueDotGradDark); filter: drop-shadow(0px 0px 4px rgba(88, 166, 255, 0.6)); }
+      .logo-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 700; font-size: 50px; fill: url(#textGradDark); letter-spacing: -0.5px; }
+      .patch-tag { font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace; font-size: 11.5px; font-weight: 700; fill: #58a6ff; letter-spacing: 2px; text-transform: uppercase; }
+    </style>
+  </defs>
+
+  <!-- Shield Emblem -->
+  <g transform="translate(10, 0)">
+    <path class="shield-base" d="M 60 10 L 108 28 C 108 80, 85 102, 60 110 C 35 102, 12 80, 12 28 Z" />
+    <path class="shield-dash" d="M 60 16 L 101 32 C 101 74, 81 94, 60 102 C 39 94, 19 74, 19 32 Z" />
+    <polyline class="code-brackets" points="43,51 31,60 43,69" />
+    <circle class="center-dot" cx="60" cy="60" r="6" />
+    <polyline class="code-brackets" points="77,51 89,60 77,69" />
+  </g>
+
+  <!-- Typography -->
+  <text x="145" y="73" class="logo-title">PatchForge</text>
+  <text x="146" y="93" class="patch-tag">UAT Patch Builder</text>
+</svg>

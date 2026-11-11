@@ -14,13 +14,20 @@ public class AppMetadataAdvice {
 	@Value("${app.version:dev}")
 	private String appVersion;
 
-	@Value("${app.logo-path:/images/patchforge-logo.svg}")
-	private String logoPath;
+	@Value("${app.logo-dark-path:/images/patchforge-logo-dark.svg}")
+	private String logoDarkPath;
+
+	@Value("${app.logo-light-path:/images/patchforge-logo-light.svg}")
+	private String logoLightPath;
 
 	@ModelAttribute
 	public void addAppMetadata(Model model) {
+		System.out.println("DEBUG: Dark Logo Path = " + logoDarkPath);
+		System.out.println("DEBUG: Light Logo Path = " + logoLightPath);
+
 		model.addAttribute("appDeveloper", appDeveloper);
 		model.addAttribute("appVersion", appVersion);
-		model.addAttribute("logoPath", logoPath);
+		model.addAttribute("logoDarkPath", logoDarkPath);
+		model.addAttribute("logoLightPath", logoLightPath);
 	}
 }

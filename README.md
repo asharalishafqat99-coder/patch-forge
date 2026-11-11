@@ -17,9 +17,8 @@ Built with **Spring Boot** and styled with a sleek **GitHub Dark Theme** UI.
 ## 🛠️ Technology Stack
 
 - **Backend:** Java 17+, Spring Boot 3.x
-- **Frontend:** HTML5, CSS3 (custom GitHub Dark theme), Thymeleaf
+- **Frontend:** HTML5, CSS3 (Dark theme), Thymeleaf
 - **Build Tool:** Maven
-- **Utilities:** Spring Boot Actuator (for auditing), Spring Security (for IP whitelisting)
 
 ## 🚀 Getting Started
 

@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title th:text="'PatchForge ' + ${appVersion} + ' · Create UAT Patch'">PatchForge · Create UAT Patch</title>
+<meta charset="UTF-8" />
+<title th:text="'PatchForge ' + ${appVersion} + ' · Create UAT Patch'">
+	PatchForge · Create UAT Patch</title>
 <style>
-/* ===== GITHUB DARK THEME ===== */
-:root {
+/* ===== GITHUB DARK/LIGHT THEME ===== */
+
+/* ── Light Theme (GitHub Light) ── */
+:root, [data-theme="light"] {
+	--gh-canvas-default: #ffffff;
+	--gh-canvas-subtle: #f6f8fa;
+	--gh-canvas-inset: #f6f8fa;
+	--gh-border-default: #d0d7de;
+	--gh-border-muted: #d8dee4;
+	--gh-fg-default: #1F2328;
+	--gh-fg-muted: #656d76;
+	--gh-fg-subtle: #6e7781;
+	--gh-accent-fg: #0969da;
+	--gh-accent-emphasis: #0969da;
+	--gh-accent-muted: rgba(9, 105, 218, 0.15);
+	--gh-success-fg: #1a7f37;
+	--gh-success-emphasis: #1f883d;
+	--gh-success-hover: #1a7f37;
+	--gh-danger-fg: #d1242f;
+	--gh-danger-emphasis: #a40e26;
+	--gh-danger-subtle: rgba(209, 36, 47, 0.1);
+	--gh-shadow: 0 1px 3px rgba(27, 31, 36, 0.12);
+}
+
+/* ── Dark Theme (GitHub Dark) ── */
+[data-theme="dark"] {
 	--gh-canvas-default: #0d1117;
 	--gh-canvas-subtle: #161b22;
 	--gh-canvas-inset: #010409;
@@ -17,13 +42,37 @@
 	--gh-accent-fg: #2f81f7;
 	--gh-accent-emphasis: #1f6feb;
 	--gh-accent-muted: rgba(56, 139, 253, 0.15);
-	--gh-accent-subtle: rgba(56, 139, 253, 0.1);
 	--gh-success-fg: #3fb950;
+	--gh-success-emphasis: #238636;
+	--gh-success-hover: #2ea043;
 	--gh-danger-fg: #f85149;
 	--gh-danger-emphasis: #da3633;
 	--gh-danger-subtle: rgba(248, 81, 73, 0.1);
-	--gh-attention-fg: #d29922;
-	--gh-neutral-muted: rgba(110, 118, 129, 0.4);
+	--gh-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Page scroll normal hai */
+html, body {
+	height: auto;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+body {
+	transition: background-color 0.3s, color 0.3s;
+	background-color: var(--gh-canvas-default);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--gh-fg-default);
+	-webkit-font-smoothing: antialiased;
+	
+	max-width: 768px;
+	margin: 0 auto;
+	/* Bottom padding barha diya taake fixed footer form ko dhak na le */
+	padding: 40px 16px 100px; 
+	display: flex;
+	flex-direction: column;
 }
 
 * {
@@ -32,59 +81,33 @@
 	padding: 0;
 }
 
-/* ── Full-viewport app shell ── */
-html, body {
-	height: 100%;
-	overflow: hidden;
-}
-
-body {
-	background-color: var(--gh-canvas-default);
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-		Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-	font-size: 14px;
-	line-height: 1.5;
-	color: var(--gh-fg-default);
-	-webkit-font-smoothing: antialiased;
-	max-width: 768px;
-	margin: 0 auto;
-	padding: 40px 16px 96px;
-	display: flex;
-	flex-direction: column;
-	min-height: 0;
-}
-
-/* ── Header: logo + title ── */
+/* ── Header ── */
 .header {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 16px;
 	margin-bottom: 16px;
 	padding-bottom: 16px;
 	border-bottom: 1px solid var(--gh-border-muted);
 	flex-wrap: wrap;
-	flex-shrink: 0;
 }
 
-/* ── Logo ── */
 .header .logo {
-    height: 40px;            /* Set a good visible height */
-    width: auto;             /* Let the width scale naturally */
-    max-width: 240px;        /* Safety cap */
-    flex-shrink: 0;
-    display: block;
-    object-fit: contain;
-    
-    /* ── NEW: Rounded corners ── */
-    border-radius: 8px;      /* Change this value to adjust the curve */
-    
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
+	height: 56px;
+	width: auto;
+	max-width: 240px;
+	flex-shrink: 0;
+	object-fit: contain;
+	border-radius: 8px;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-user-drag: none;
 }
+
+.logo-dark { display: block; }
+.logo-light { display: none; }
+[data-theme="light"] .logo-dark { display: none; }
+[data-theme="light"] .logo-light { display: block; }
 
 h1 {
 	font-size: 20px;
@@ -92,7 +115,31 @@ h1 {
 	color: var(--gh-fg-default);
 	letter-spacing: -0.2px;
 	min-width: 0;
+	flex-grow: 1;
 }
+
+.theme-toggle {
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	padding: 6px;
+	cursor: pointer;
+	color: var(--gh-fg-muted);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.2s, background-color 0.2s;
+}
+
+.theme-toggle:hover {
+	color: var(--gh-fg-default);
+	background-color: var(--gh-border-muted);
+}
+
+[data-theme="light"] .sun-icon { display: none; }
+[data-theme="light"] .moon-icon { display: block; }
+[data-theme="dark"] .sun-icon { display: block; }
+[data-theme="dark"] .moon-icon { display: none; }
 
 /* ── Subtitle ── */
 .subtitle {
@@ -100,7 +147,6 @@ h1 {
 	color: var(--gh-fg-muted);
 	margin-bottom: 24px;
 	margin-top: 4px;
-	flex-shrink: 0;
 }
 
 /* ── Error message ── */
@@ -111,72 +157,75 @@ h1 {
 	background-color: var(--gh-danger-subtle);
 	color: var(--gh-fg-default);
 	padding: 16px;
-	border: 1px solid rgba(248, 81, 73, 0.4);
+	border: 1px solid var(--gh-danger-fg);
 	border-radius: 6px;
 	margin-bottom: 16px;
 	font-size: 14px;
 	line-height: 1.5;
-	flex-shrink: 0;
 }
 
 .error::before {
-	content: '';
+	content: "";
 	display: block;
 	width: 16px;
 	height: 16px;
 	flex-shrink: 0;
 	margin-top: 1px;
 	background-color: var(--gh-danger-fg);
-	-webkit-mask:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Z'/%3E%3C/svg%3E")
-		no-repeat center;
-	mask:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Z'/%3E%3C/svg%3E")
-		no-repeat center;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Z'/%3E%3C/svg%3E") no-repeat center;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Z'/%3E%3C/svg%3E") no-repeat center;
 }
 
-.error:empty {
-	display: none;
-}
+.error:empty { display: none; }
 
-/* ── Form container ── */
+/* ── Form Container (No Internal Scroll) ── */
 form {
 	background-color: var(--gh-canvas-subtle);
 	border: 1px solid var(--gh-border-default);
-	border-radius: 6px;
-	padding: 24px;
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
-	overscroll-behavior: contain;
+	border-radius: 8px;
+	padding: 32px;
+	box-shadow: var(--gh-shadow);
 }
+
+/* ── Form Layout ── */
+.field-group { margin-bottom: 24px; }
+.field-group:last-of-type { margin-bottom: 0; }
 
 label {
 	display: block;
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: 600;
 	color: var(--gh-fg-default);
-	margin-bottom: 6px;
-	margin-top: 16px;
-	line-height: 1.5;
-}
-
-label:first-of-type {
-	margin-top: 0;
+	margin-bottom: 8px;
+	letter-spacing: -0.1px;
 }
 
 label.required::after {
-	content: ' *';
+	content: " *";
 	color: var(--gh-danger-fg);
 	font-weight: 400;
 }
 
 /* ── Inputs ── */
-input[type=text], input[type=file], textarea {
+.input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.input-icon {
+	position: absolute;
+	left: 12px;
+	color: var(--gh-fg-subtle);
+	pointer-events: none;
+	width: 16px;
+	height: 16px;
+}
+
+input[type="text"], input[type="file"], textarea {
 	width: 100%;
-	padding: 5px 12px;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-		Helvetica, Arial, sans-serif;
+	padding: 10px 12px;
+	font-family: inherit;
 	font-size: 14px;
 	line-height: 20px;
 	color: var(--gh-fg-default);
@@ -184,117 +233,122 @@ input[type=text], input[type=file], textarea {
 	border: 1px solid var(--gh-border-default);
 	border-radius: 6px;
 	outline: none;
-	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	transition: border-color 0.2s, box-shadow 0.2s;
 	vertical-align: middle;
 }
 
-input[type=text] {
-	min-height: 32px;
+.input-wrapper input[type="text"] { padding-left: 36px; }
+
+[data-theme="light"] input[type="text"], 
+[data-theme="light"] textarea {
+	box-shadow: inset 0 1px 2px rgba(27, 31, 36, 0.04);
 }
 
-input[type=text]:focus, input[type=file]:focus, textarea:focus {
+input[type="text"]:focus, textarea:focus {
 	border-color: var(--gh-accent-emphasis);
 	box-shadow: 0 0 0 3px var(--gh-accent-muted);
 }
 
-input[type=text]::placeholder, textarea::placeholder {
+input[type="text"]::placeholder, textarea::placeholder {
 	color: var(--gh-fg-subtle);
 	opacity: 1;
 }
 
-input[type=file] {
-	padding: 6px 12px;
+/* ── Modern File Upload ── */
+.file-upload-box {
+	border: 2px dashed var(--gh-border-default);
+	border-radius: 8px;
+	padding: 32px 16px;
+	text-align: center;
+	background-color: var(--gh-canvas-default);
 	cursor: pointer;
-	min-height: 32px;
+	transition: all 0.2s ease;
+	position: relative;
 }
 
-input[type=file]::file-selector-button {
-	font-family: inherit;
-	font-size: 12px;
-	font-weight: 600;
-	line-height: 20px;
-	padding: 5px 16px;
-	margin-right: 12px;
-	color: var(--gh-fg-default);
-	background-color: var(--gh-canvas-subtle);
-	border: 1px solid var(--gh-border-default);
-	border-radius: 6px;
+.file-upload-box:hover {
+	border-color: var(--gh-accent-emphasis);
+	background-color: var(--gh-accent-subtle);
+}
+
+.file-upload-box input[type="file"] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
 	cursor: pointer;
-	transition: background-color 0.2s, border-color 0.2s;
 }
 
-input[type=file]::file-selector-button:hover {
-	background-color: var(--gh-border-muted);
-	border-color: var(--gh-fg-subtle);
-}
+.file-upload-icon { color: var(--gh-fg-muted); margin-bottom: 8px; }
+.file-upload-text { font-size: 14px; font-weight: 600; color: var(--gh-accent-fg); margin-bottom: 4px; }
+.file-upload-hint { font-size: 12px; color: var(--gh-fg-muted); }
 
+/* ── Textarea ── */
 textarea {
-	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-		"Liberation Mono", monospace;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 	font-size: 13px;
-	line-height: 1.5;
-	padding: 8px 12px;
+	line-height: 1.6;
+	padding: 12px;
 	resize: vertical;
-	min-height: 100px;
+	min-height: 120px;
 }
 
-.row {
-	display: flex;
-	gap: 16px;
-	margin-top: 0;
-}
+.row { display: flex; gap: 16px; }
+.row>div { flex: 1; min-width: 0; }
 
-.row>div {
-	flex: 1;
-	min-width: 0;
-}
+.hint { font-size: 12px; color: var(--gh-fg-muted); margin-top: 6px; line-height: 1.4; }
 
-.hint {
-	font-size: 12px;
-	color: var(--gh-fg-muted);
-	margin-top: 4px;
-	line-height: 1.4;
-}
-
+/* ── Form Actions ── */
 .form-actions {
-	margin-top: 24px;
-	padding-top: 16px;
+	margin-top: 32px;
+	padding-top: 24px;
 	border-top: 1px solid var(--gh-border-muted);
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	gap: 8px;
+	gap: 12px;
 }
 
-button[type=submit] {
+/* ── Submit Button ── */
+button[type="submit"] {
 	font-family: inherit;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 20px;
-	padding: 5px 16px;
-	min-height: 32px;
+	padding: 8px 20px;
+	min-height: 36px;
 	color: #ffffff;
-	background-color: #238636;
+	background-color: var(--gh-success-emphasis);
 	border: 1px solid rgba(240, 246, 252, 0.1);
 	border-radius: 6px;
 	cursor: pointer;
 	transition: background-color 0.2s;
-	position: relative;
 	user-select: none;
 	appearance: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
-button[type=submit]:hover { background-color: #2ea043; }
-button[type=submit]:active { background-color: #238636; box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2); }
-button[type=submit]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gh-accent-muted); }
+[data-theme="light"] button[type="submit"] {
+	border: 1px solid rgba(31, 35, 40, 0.15);
+	box-shadow: 0 1px 0 rgba(31, 35, 40, 0.1);
+}
 
-button[type=reset] {
+button[type="submit"]:hover { background-color: var(--gh-success-hover); }
+button[type="submit"]:active { background-color: var(--gh-success-emphasis); box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2); }
+button[type="submit"]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gh-accent-muted); }
+
+/* ── Reset Button ── */
+button[type="reset"] {
 	font-family: inherit;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 20px;
-	padding: 5px 16px;
-	min-height: 32px;
+	padding: 8px 20px;
+	min-height: 36px;
 	color: var(--gh-fg-default);
 	background-color: var(--gh-canvas-subtle);
 	border: 1px solid var(--gh-border-default);
@@ -305,22 +359,25 @@ button[type=reset] {
 	appearance: none;
 }
 
-button[type=reset]:hover { background-color: var(--gh-danger-emphasis); border-color: var(--gh-danger-emphasis); color: #ffffff; }
-button[type=reset]:active { background-color: var(--gh-danger-emphasis); box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2); }
-button[type=reset]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gh-danger-subtle); }
+[data-theme="light"] button[type="reset"] { box-shadow: 0 1px 0 rgba(31, 35, 40, 0.04); }
 
-.field-group { margin-bottom: 16px; }
-.field-group:last-of-type { margin-bottom: 0; }
+button[type="reset"]:hover {
+	background-color: var(--gh-danger-subtle);
+	border-color: var(--gh-danger-fg);
+	color: var(--gh-danger-fg);
+}
+button[type="reset"]:active { background-color: var(--gh-danger-emphasis); box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2); }
+button[type="reset"]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gh-danger-subtle); }
 
 /* ── Scrollbars ── */
-form::-webkit-scrollbar, textarea::-webkit-scrollbar { width: 10px; background: var(--gh-canvas-default); }
-form::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-thumb { background: var(--gh-border-default); border-radius: 6px; border: 2px solid var(--gh-canvas-default); }
-form::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { background: var(--gh-fg-subtle); }
+textarea::-webkit-scrollbar { width: 10px; background: var(--gh-canvas-default); }
+textarea::-webkit-scrollbar-thumb { background: var(--gh-border-default); border-radius: 6px; border: 2px solid var(--gh-canvas-default); }
+textarea::-webkit-scrollbar-thumb:hover { background: var(--gh-fg-subtle); }
 
-/* ── Footer dock ── */
+/* ── Fixed Footer dock (Right corner) ── */
 .meta-cluster {
 	position: fixed;
-	bottom: 16px;
+	bottom: 20px;
 	right: 24px;
 	display: flex;
 	align-items: center;
@@ -331,10 +388,8 @@ form::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { b
 	background-color: var(--gh-canvas-default);
 	border: 1px solid var(--gh-border-default);
 	border-radius: 999px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	box-shadow: var(--gh-shadow);
 	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 }
 
@@ -350,7 +405,10 @@ form::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { b
 	white-space: nowrap;
 }
 
-.developer:hover { border-color: var(--gh-fg-subtle); background-color: var(--gh-canvas-inset); }
+.developer:hover {
+	border-color: var(--gh-fg-subtle);
+	background-color: var(--gh-canvas-inset);
+}
 
 .developer-avatar {
 	display: inline-flex;
@@ -374,7 +432,7 @@ form::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { b
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 12px;
 	font-weight: 500;
 	line-height: 1;
@@ -387,115 +445,199 @@ form::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { b
 	transition: color 0.15s, border-color 0.15s, background-color 0.15s;
 }
 
-.version-badge:hover { color: var(--gh-fg-default); border-color: var(--gh-fg-subtle); background-color: var(--gh-canvas-inset); }
-.version-badge .dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--gh-success-fg); display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(63, 185, 80, 0.15); }
+.version-badge:hover {
+	color: var(--gh-fg-default);
+	border-color: var(--gh-fg-subtle);
+	background-color: var(--gh-canvas-inset);
+}
+
+.version-badge .dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: var(--gh-success-fg);
+	display: inline-block;
+	flex-shrink: 0;
+	box-shadow: 0 0 0 2px rgba(63, 185, 80, 0.15);
+}
+
 .version-badge .label { color: var(--gh-fg-subtle); font-weight: 400; }
 .version-badge .value { color: var(--gh-fg-default); font-weight: 600; }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-	body { padding: 20px 12px 96px; }
-	form { padding: 16px; }
+	body { padding: 20px 12px 100px; }
+	form { padding: 20px; }
 	.row { flex-direction: column; gap: 0; }
 	.row>div { width: 100%; }
 	h1 { font-size: 17px; }
-
-	.meta-cluster { left: 12px; right: 12px; bottom: 12px; justify-content: center; }
+	.header .logo { height: 44px; }
+	
+	/* Mobile screen par footer full width le lega taake text cut na ho */
+	.meta-cluster { 
+		left: 12px; 
+		right: 12px; 
+		bottom: 12px; 
+		justify-content: center; 
+	}
 	.developer-text { max-width: 140px; }
 	.developer-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-	.header .logo { width: 36px; height: 36px; }
 }
 </style>
 </head>
 <body>
-
 	<!-- ── Header ── -->
 	<div class="header">
-		<img class="logo" th:src="@{${logoPath}}" alt="PatchForge logo" width="48" height="48" />
+		<img class="logo logo-dark" th:src="@{${logoDarkPath}}" alt="PatchForge logo" />
+		<img class="logo logo-light" th:src="@{${logoLightPath}}" alt="PatchForge logo" />
+		
 		<h1>PatchForge — Create UAT Patch</h1>
+
+		<button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+			<svg class="sun-icon" viewBox="0 0 16 16" width="16" height="16">
+				<path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0Zm0 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.061Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM0 8a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 8Zm13 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 13 8ZM2.343 13.657a.75.75 0 0 1 0-1.061l1.06-1.06a.75.75 0 0 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm9.193-9.193a.75.75 0 0 1 0-1.06l1.06-1.061a.75.75 0 0 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Z" />
+			</svg>
+			<svg class="moon-icon" viewBox="0 0 16 16" width="16" height="16">
+				<path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z" />
+			</svg>
+		</button>
 	</div>
 
-	<p class="subtitle">Build and package a UAT patch with class files,
-		SQL queries, and deployment notes.</p>
+	<p class="subtitle">Build and package a UAT patch with class files, SQL queries, and deployment notes.</p>
 
 	<div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-	<form th:action="@{/patch}" th:object="${patchForm}" method="post"
-		enctype="multipart/form-data">
-
+	<form th:action="@{/patch}" th:object="${patchForm}" method="post" enctype="multipart/form-data">
+		
 		<div class="field-group">
-			<label for="warFile" class="required">WAR file</label>
-			<input type="file" id="warFile" name="warFile" accept=".war" required />
-			<div class="hint">Select the .war archive to patch.</div>
+			<label class="required">WAR File</label>
+			<div class="file-upload-box">
+				<input type="file" id="warFile" th:field="*{warFile}" accept=".war" required />
+				<svg class="file-upload-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+					<polyline points="17 8 12 3 7 8"></polyline>
+					<line x1="12" y1="3" x2="12" y2="15"></line>
+				</svg>
+				<div class="file-upload-text">Click to upload or drag & drop</div>
+				<div class="file-upload-hint">Only .war files are supported</div>
+			</div>
 		</div>
 
 		<div class="row">
 			<div class="field-group">
-				<label for="branchName" class="required">Branch name</label>
-				<input type="text" id="branchName" th:field="*{branchName}"
-					placeholder="release-2.3" required />
+				<label for="branchName" class="required">Branch Name</label>
+				<div class="input-wrapper">
+					<svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="6" y1="3" x2="6" y2="15"></line>
+						<circle cx="18" cy="6" r="3"></circle>
+						<circle cx="6" cy="18" r="3"></circle>
+						<path d="M18 9a9 9 0 0 1-9 9"></path>
+					</svg>
+					<input type="text" id="branchName" th:field="*{branchName}" placeholder="e.g. release-2.3" required />
+				</div>
 			</div>
+			
 			<div class="field-group">
 				<label for="fixation" class="required">Fixation</label>
-				<input type="text" id="fixation" th:field="*{fixation}"
-					placeholder="FIX-101" required />
+				<div class="input-wrapper">
+					<svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+						<polyline points="14 2 14 8 20 8"></polyline>
+						<line x1="16" y1="13" x2="8" y2="13"></line>
+						<line x1="16" y1="17" x2="8" y2="17"></line>
+						<polyline points="10 9 9 9 8 9"></polyline>
+					</svg>
+					<input type="text" id="fixation" th:field="*{fixation}" placeholder="e.g. FIX-101" required />
+				</div>
 			</div>
+			
 			<div class="field-group">
 				<label for="date" class="required">Date</label>
-				<input type="text" id="date" th:field="*{date}" required
-					placeholder="YYYY-MM-DD" />
+				<div class="input-wrapper">
+					<svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+						<line x1="16" y1="2" x2="16" y2="6"></line>
+						<line x1="8" y1="2" x2="8" y2="6"></line>
+						<line x1="3" y1="10" x2="21" y2="10"></line>
+					</svg>
+					<input type="text" id="date" th:field="*{date}" required placeholder="YYYY-MM-DD" />
+				</div>
 			</div>
 		</div>
 
 		<div class="field-group">
-			<label for="classPaths">Class paths</label>
-			<textarea id="classPaths" th:field="*{classPaths}" rows="8"
+			<label for="classPaths">Class Paths</label>
+			<textarea id="classPaths" th:field="*{classPaths}" rows="6"
 				placeholder="C:\Users\asher.ali\Desktop\gitProjects\...\ag-mw-upd\src\main\com\ag\config\SomeClass.java"></textarea>
-			<div class="hint">Paste the full path for each .class file to
-				include in this patch, one per line.</div>
+			<div class="hint">Paste the full path for each .class file to include in this patch, one per line.</div>
 		</div>
 
 		<div class="field-group">
-			<label for="sql">SQL queries <span
-				style="color: var(--gh-fg-muted); font-weight: 400;">(optional)</span></label>
-			<textarea id="sql" th:field="*{sql}" rows="5"
-				placeholder="SELECT * FROM ..."></textarea>
+			<label for="sql">SQL Queries <span style="color: var(--gh-fg-muted); font-weight: 400">(Optional)</span></label>
+			<textarea id="sql" th:field="*{sql}" rows="5" placeholder="SELECT * FROM ..."></textarea>
 		</div>
 
 		<div class="field-group">
-			<label for="guide">Guide <span
-				style="color: var(--gh-fg-muted); font-weight: 400;">(optional)</span></label>
-			<textarea id="guide" th:field="*{guide}" rows="6"
-				placeholder="Deployment notes / steps for UAT..."></textarea>
+			<label for="guide">Guide <span style="color: var(--gh-fg-muted); font-weight: 400">(Optional)</span></label>
+			<textarea id="guide" th:field="*{guide}" rows="5" placeholder="Deployment notes / steps for UAT..."></textarea>
 		</div>
 
 		<div class="form-actions">
 			<button type="reset">Reset form</button>
-			<button type="submit">Build Patch</button>
+			<button type="submit">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+					<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+					<line x1="12" y1="22.08" x2="12" y2="12"></line>
+				</svg>
+				Build Patch
+			</button>
 		</div>
-
 	</form>
 
-	<!-- ── Footer: developer + version (fixed dock) ── -->
+	<!-- Fixed Footer dock (Bottom-Right) -->
 	<div class="meta-cluster">
 		<span class="developer" th:title="'Developed by ' + ${appDeveloper}">
-			<span class="developer-avatar" aria-hidden="true">
+			<span class="developer-avatar" aria-hidden="true"> 
 				<svg height="14" viewBox="0 0 16 16" width="14">
 					<path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
 				</svg>
-			</span>
-			<span class="developer-text">
+			</span> 
+			<span class="developer-text"> 
 				<span class="developer-label">Developer</span>
 				<span class="developer-name" th:text="${appDeveloper}">—</span>
 			</span>
-		</span>
-		<span class="version-badge" th:title="'PatchForge version ' + ${appVersion}">
-			<span class="dot"></span>
-			<span class="label">v</span>
+		</span> 
+		<span class="version-badge" th:title="'PatchForge version ' + ${appVersion}"> 
+			<span class="dot"></span> 
+			<span class="label">v</span> 
 			<span class="value" th:text="${appVersion}">—</span>
 		</span>
 	</div>
 
+	<script>
+		function setTheme(theme) {
+			document.documentElement.setAttribute("data-theme", theme);
+			localStorage.setItem("theme", theme);
+		}
+
+		const savedTheme = localStorage.getItem("theme");
+		const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+		if (savedTheme) {
+			setTheme(savedTheme);
+		} else {
+			setTheme("dark");
+		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			const toggleBtn = document.getElementById("theme-toggle");
+			toggleBtn.addEventListener("click", () => {
+				const currentTheme = document.documentElement.getAttribute("data-theme");
+				const newTheme = currentTheme === "dark" ? "light" : "dark";
+				setTheme(newTheme);
+			});
+		});
+	</script>
 </body>
 </html>
